@@ -10,7 +10,7 @@ Al instanciar la clase directamente dentro del módulo y exponer solo dicha inst
 se garantiza que cualquier parte del programa que la importe esté trabajando exactamente con el mismo objeto.
 """
 
-__all__ = ["my_singleton"]
+__all__ = ["singleton_instance"]
 
 
 class _Singleton:
@@ -24,5 +24,5 @@ class _Singleton:
 
 
 # Se crea la instancia única de la clase al momento de cargar el módulo.
-# Cualquier referencia a 'MySingleton' en otros archivos apuntará a este objeto.
-my_singleton = _Singleton()
+# Cualquier referencia a 'singleton_instance' en otros archivos apuntará a este objeto.
+singleton_instance = _Singleton()

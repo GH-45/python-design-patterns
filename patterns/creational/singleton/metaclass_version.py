@@ -15,22 +15,26 @@ T = TypeVar("T")
 
 
 class SingletonMeta(type):
-    """Metaclase para la implementación del patrón Singleton."""
+    """Metaclase para la implementación del patrón Singleton.
 
-    # Un diccionario de clase que actúa como caché para el almacenamiento de las instancias creadas,
-    # en donde la `llave` es la clase misma y el `valor` es la instancia única para la clase
+    Attributes:
+        _instances (dict): Un diccionario de clase que actúa como caché para el
+                           almacenamiento de las instancias creadas, en donde la llave es la
+                           clase misma y el valor es la instancia única para dicha clase.
+    """
+
     _instances: dict[type[Any], Any] = {}
 
     def __call__(cls: type[T], *args: Any, **kwargs: Any) -> T:
-        """Método que se encarga de crear o retornar la instancia única de la clase instanciada.
+        """Método encargado de controlar la creación de una nueva instancia.
 
         Args:
             cls: La clase que se está instanciando.
-            *args: Argumentos posicionales de la clase a instanciar.
-            **kwargs: Argumentos nombrados de la clase a instanciar.
+            *args: Argumentos posicionales para la inicialización.
+            **kwargs: Argumentos de palabra clave para la inicialización.
 
         Returns:
-            Una nueva instancia o una creada previamente si existe.
+            La instancia única de la clase, ya sea recién creada o recuperada desde caché.
         """
         # Si la clase no tiene una instancia creada, se crea una nueva instancia
         # y se almacena en el diccionario _instances
@@ -39,10 +43,3 @@ class SingletonMeta(type):
 
         # Se retorna la instancia única de la clase instanciada
         return cast(T, cls._instances[cls])
-
-
-class MySingletonClass(metaclass=SingletonMeta):
-    """Ejemplo de clase que utiliza la metaclase SingletonMeta."""
-
-    def some_business_logic(self) -> None:
-        """Ejemplo de método que puede contener la lógica de negocio de la clase."""
