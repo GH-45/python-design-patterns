@@ -1,15 +1,28 @@
-"""Ejemplo de implementación del patrón Prototype utilizando Dunder Methods.
+"""Implementación del patrón de diseño Prototype utilizando Dunder Methods.
 
-Este método de implementación se basa en la sobrecarga de los métodos especiales __copy__ y __deepcopy__,
-los cuales son utilizados por la biblioteca estándar copy para realizar copias superficiales y profundas de objetos,
-respectivamente.
+Este enfoque se basa en la sobrecarga de los métodos especiales __copy__ y __deepcopy__,
+los cuales son utilizados por la biblioteca estándar copy para realizar copias
+superficiales y profundas de objetos, respectivamente.
+
+Componentes clave:
+-----------------
+*   ConcretePrototype: Clase que implementa los métodos __copy__ y __deepcopy__ para
+    definir cómo se deben copiar los objetos. Este enfoque no requiere una interfaz
+    explícita, ya que cualquier clase que implemente estos métodos puede ser clonada.
+
+Flujo de trabajo:
+----------------
+El Cliente mantiene una referencia a un objeto Prototipo. Cuando necesita una nueva
+instancia, puede utilizar la función copy.copy() para obtener una copia superficial
+o copy.deepcopy() para obtener una copia profunda. Estos métodos invocarán
+automáticamente los métodos __copy__ y __deepcopy__.
 """
 
 import copy
-from typing import Any
+from typing import Any, Self
 
 
-class SomeObject:
+class ConcretePrototype:
     """Clase que implementa el patrón Prototype usando Dunder Methods."""
 
     def __init__(
@@ -29,7 +42,7 @@ class SomeObject:
         self.some_mutable = some_mutable
         self.some_instance_only = some_instance_only if some_instance_only is not None else {}
 
-    def __copy__(self) -> "SomeObject":
+    def __copy__(self) -> Self:
         """Crea una una copia superficial de la instancia (shallow copy).
 
         Returns:
@@ -45,7 +58,7 @@ class SomeObject:
             {},
         )
 
-    def __deepcopy__(self, memo: dict[int, Any] | None = None) -> "SomeObject":
+    def __deepcopy__(self, memo: dict[int, Any] | None = None) -> Self:
         """Crea una copia profunda de la instancia (deep copy).
 
         Args:
@@ -68,16 +81,4 @@ class SomeObject:
             # en __deepcopy__ se desea que se mantenga la independencia total,
             # por lo que se hace una copia profunda de este atributo también
             copy.deepcopy(self.some_instance_only, memo),
-        )
-
-    def __repr__(self) -> str:
-        """Representación legible del objeto.
-
-        Note: Metodo solo para fines de demostración, no es parte del patrón Prototype.
-        """
-        return (
-            f"{self.__class__.__name__}("
-            f"some_immutable={self.some_immutable!r}, "
-            f"some_mutable={self.some_mutable}, "
-            f"some_instance_only={self.some_instance_only})"
         )

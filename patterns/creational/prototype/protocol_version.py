@@ -1,33 +1,42 @@
-"""Ejemplo de implementación del patrón Prototype utilizando Protocols.
+"""Implementación del patrón de diseño Prototype utilizando Python Protocols (PEP 544).
 
-Este método de implementación utiliza tipado estructural (Protocol)
-para definir la estructura que debe tener un prototipo.
+Este enfoque sustituye la herencia rígida de las Clases Abstractas (ABC) por
+un tipado estructural. Permitiendo definir el contrato de clonación de forma
+más flexible y desacoplada.
 
-Cada clase que implementa el patrón Prototype debe cumplir con la interfaz definida por el Protocol,
-lo que permite una mayor flexibilidad y desacoplamiento entre las clases.
+Componentes clave:
+-----------------
+*   Prototype (Protocol): Definición estructural que especifica los métodos de clonación.
+    Cualquier clase que implemente estos métodos puede ser utilizada como prototipo.
+*   ConcretePrototype: Clase independiente que implementa y gestiona las operaciones
+    de clonación.
+
+Flujo de trabajo:
+----------------
+El Cliente mantiene una referencia a un objeto Prototipo. Cuando necesita una nueva
+instancia, llama al método de clonación del Prototipo. Este método devuelve una copia
+exacta del estado actual del objeto, la cual puede ser modificada por el Cliente de
+forma independiente sin alterar el original.
 """
 
 import copy
-from typing import Any, Protocol, TypeVar, runtime_checkable
-
-# Variable de tipo vinculada a la clase Prototype para asegurar la consistencia del tipo de retorno
-T = TypeVar("T", bound="Prototype")
+from typing import Any, Protocol, Self, runtime_checkable
 
 
 @runtime_checkable  # Habilita la verificación en tiempo de ejecución para este Protocol
 class Prototype(Protocol):
-    """Clase que define la interfaz común que deben implementar todos los objetos clonables."""
+    """Protocol que define la interfaz común para objetos clonables."""
 
-    def clone(self: T) -> T:
-        """Metodo que deben implementar los prototipos para hacer una copia superficial (shallow copy)."""
+    def clone(self) -> Self:
+        """Método para hacer una copia superficial (shallow copy)."""
         ...
 
-    def deepclone(self: T, memo: dict[int, Any] | None = None) -> T:
-        """Metodo que deben implementar los prototipos para hacer una copia profunda (deep copy)."""
+    def deepclone(self, memo: dict[int, Any] | None = None) -> Self:
+        """Método para hacer una copia profunda (deep copy)."""
         ...
 
 
-class SomeObject:
+class ConcretePrototype:
     """Clase que implementa el patrón Prototype usando Protocols."""
 
     def __init__(
@@ -47,7 +56,7 @@ class SomeObject:
         self.some_mutable = some_mutable
         self.some_instance_only = some_instance_only if some_instance_only is not None else {}
 
-    def clone(self) -> "SomeObject":
+    def clone(self) -> Self:
         """Crea una una copia superficial de la instancia (shallow copy).
 
         Returns:
@@ -63,7 +72,7 @@ class SomeObject:
             {},
         )
 
-    def deepclone(self, memo: dict[int, Any] | None = None) -> "SomeObject":
+    def deepclone(self, memo: dict[int, Any] | None = None) -> Self:
         """Crea una copia profunda de la instancia (deep copy).
 
         Args:
@@ -86,16 +95,4 @@ class SomeObject:
             # en __deepcopy__ se desea que se mantenga la independencia total,
             # por lo que se hace una copia profunda de este atributo también
             copy.deepcopy(self.some_instance_only, memo),
-        )
-
-    def __repr__(self) -> str:
-        """Representación legible del objeto.
-
-        Note: Metodo solo para fines de demostración, no es parte del patrón Prototype.
-        """
-        return (
-            f"{self.__class__.__name__}("
-            f"some_immutable={self.some_immutable!r}, "
-            f"some_mutable={self.some_mutable}, "
-            f"some_instance_only={self.some_instance_only})"
         )

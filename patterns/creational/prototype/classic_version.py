@@ -1,33 +1,43 @@
-"""Ejemplo de implementación del patrón Prototype utilizando el enfoque clasico.
+"""Implementación del patrón de diseño Prototype utilizando el enfoque clásico de GoF (Gang of Four).
 
-Este método de implementación consiste en define una clase abstracta con métodos abstractos
-que debe ser implementado por subclases concretas.
+El enfoque clásico utiliza una interfaz abstracta para definir el método de clonación,
+y las clases concretas implementan esta interfaz para proporcionar la lógica específica
+de clonación.
 
-Cada subclase concreta implementa los métodos de clonación para crear
-copias superficiales (shallow copy) o profundas (deep copy) de sí misma.
+Componentes clave:
+-----------------
+*   Prototype (ABC): Interfaz que define los métodos de clonación.
+*   ConcretePrototype: Clase que implementa y gestiona las operaciones de clonación.
+
+Flujo de trabajo:
+----------------
+El Cliente mantiene una referencia a un objeto Prototipo. Cuando necesita una nueva
+instancia, llama al método de clonación del Prototipo. Este método devuelve una copia
+exacta del estado actual del objeto, la cual puede ser modificada por el Cliente de
+forma independiente sin alterar el original.
 """
 
 import copy
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Self
 
 
 class Prototype(ABC):
-    """Clase base abstracta que define la interfaz común que deben implementar todos los objetos clonables."""
+    """Clase base abstracta que define la interfaz de los objetos clonables."""
 
     @abstractmethod
-    def clone(self) -> "Prototype":
-        """Metodo abstracto que deben implementar las subclases para hacer una copia superficial (shallow copy)."""
+    def clone(self) -> Self:
+        """Método abstracto para hacer una copia superficial (shallow copy)."""
         pass
 
     @abstractmethod
-    def deepclone(self, memo: dict[int, Any] | None = None) -> "Prototype":
-        """Metodo abstracto que deben implementar las subclases para hacer una copia profunda (deep copy)."""
+    def deepclone(self, memo: dict[int, Any] | None = None) -> Self:
+        """Método abstracto para hacer una copia profunda (deep copy)."""
         pass
 
 
-class SomeObject(Prototype):
-    """Clase que implementa el patrón Prototype usando el enfoque clásico."""
+class ConcretePrototype(Prototype):
+    """Implementación concreta del prototipo que puede ser clonada."""
 
     def __init__(
         self,
@@ -46,7 +56,7 @@ class SomeObject(Prototype):
         self.some_mutable = some_mutable
         self.some_instance_only = some_instance_only if some_instance_only is not None else {}
 
-    def clone(self) -> "SomeObject":
+    def clone(self) -> Self:
         """Crea una una copia superficial de la instancia (shallow copy).
 
         Returns:
@@ -62,7 +72,7 @@ class SomeObject(Prototype):
             {},
         )
 
-    def deepclone(self, memo: dict[int, Any] | None = None) -> "SomeObject":
+    def deepclone(self, memo: dict[int, Any] | None = None) -> Self:
         """Crea una copia profunda de la instancia (deep copy).
 
         Args:
@@ -85,16 +95,4 @@ class SomeObject(Prototype):
             # en __deepcopy__ se desea que se mantenga la independencia total,
             # por lo que se hace una copia profunda de este atributo también
             copy.deepcopy(self.some_instance_only, memo),
-        )
-
-    def __repr__(self) -> str:
-        """Representación legible del objeto.
-
-        Note: Metodo solo para fines de demostración, no es parte del patrón Prototype.
-        """
-        return (
-            f"{self.__class__.__name__}("
-            f"some_immutable={self.some_immutable!r}, "
-            f"some_mutable={self.some_mutable}, "
-            f"some_instance_only={self.some_instance_only})"
         )
